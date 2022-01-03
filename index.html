@@ -1,79 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopify Metafields</title>
+    <title>Metabulk - A Shopify Metafields Bulk Edit Link Generator</title>
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com/"></script>
 </head>
 <body x-data="meta" class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-screen-lg mx-auto p-8 md:p-32">
-    <h1 class="col-span-full text-2xl font-bold">Shopify Bulk Metafield Generator</h1>
+    <div class="col-span-full space-y-4">
+        <h1 class="text-2xl font-bold">Metabulk <sup class="uppercase text-xs">Beta</sup></h1>
+        <p class="text-lg text-slate-500">A Shopify Metafields Bulk Edit Link Generator</p>
+    </div>
     <section>
-        <h2 class="text-xl font-bold">Inputs</h2>
-        <form class="grid grid-cols-1 gap-4 mt-8">
+        <h2 class="text-xl font-bold mb-4">Input</h2>
+        <form class="grid grid-cols-1 gap-4">
             <div>
-                <label for="shop" class="block">Shop URL</label>
-                <input type="text" name="shop" id="shop" x-model="shop" class="border w-full p-2" placeholder="example.myshopify.com">
+                <label for="shop" class="block pb-1">Shop URL</label>
+                <input type="text" name="shop" id="shop" x-model="shop" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10" placeholder="example.myshopify.com">
             </div>
             <div>
-                <label for="resource" class="block">Resource type</label>
-                <select name="resource" id="resource" x-model="resource" class="border p-2">
+                <label for="resource" class="block pb-1">Resource type</label>
+                <select name="resource" id="resource" x-model="resource" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10">
                     <option value="Product">Product</option>
+                    <option value="ProductVariant">Variant</option>
                     <option value="Collection">Collection</option>
                     <option value="Article">Article</option>
                 </select>
             </div>
-            <ul class="space-y-4">
-                <template x-for="(field, index) in fields">
-                    <li>
-                        <fieldset class="grid grid-cols-1 gap-2 border p-2">
-                            <legend>Field <span x-text="index + 1 + ': '"></span></legend>
-                            <div>
-                                <label :for="'namespace_' + index + 1" class="block">Namespace</label>
-                                <input type="text" :name="'namespace_' + index + 1" :id="'namespace_' + index + 1" x-model="fields[index].namespace" class="border p-2"></span>
-                            </div>
-                            <div>
-                                <label :for="'key_' + index + 1" class="block">Key</label>
-                                <input type="text" :name="'key_' + index + 1" :id="'key_' + index + 1" x-model="fields[index].key" class="border p-2"></span>
-                            </div>
-                            <div>
-                                <label :for="'type_' + index + 1" class="block">Resource type</label>
-                                <select :name="'type_' + index + 1" :id="'type_' + index + 1" x-model="fields[index].type" class="border p-2">
-                                    <option value="string">String</option>
-                                    <option value="boolean">Boolean</option>
-                                    <option value="number">Number</option>
-                                    <option value="select">Select</option>
-                                    <option value="money">Money</option>
-                                </select>
-                            </div>
-                        </fieldset>
-                    </li>
-                </template>
-            </ul>
-            <button type="button" @click="fields.push({})" class="p-2 bg-slate-100">Add Field</button>
-        </form>
-    </section>
-    <section>
-        <div class="grid grid-cols-1 gap-2">
-            <h2 class="text-xl font-bold">Output</h2>
             <div>
-                <h3 class="text-lg font-bold">Fields</h3>
-                <ul class="list-decimal pl-4">
-                    <template x-for="(field, index) in fields">
-                        <li class="mt-2">
-                            <span x-text="field.namespace"></span>
-                            <span class="text-slate-300">.</span>
-                            <span x-text="field.key"></span>
-                            <span x-text="field.type" class="text-slate-300 italic capitalize"></span>
+                <h3 class="font-bold">Metafields</h3>
+                <ul class="space-y-4">
+                    <template x-for="(field, index) in fields" :key="'field_input__' + index">
+                        <li>
+                            <fieldset class="grid grid-cols-1 gap-2 border border-slate-500 p-4">
+                                <legend class="px-2">Field <span x-text="index + 1 + ': '"></span></legend>
+                                <div>
+                                    <label :for="'namespace_' + index" class="block pb-1">Namespace</label>
+                                    <input type="text" :name="'namespace_' + index" :id="'namespace_' + index" x-model="fields[index].namespace" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10"></span>
+                                </div>
+                                <div>
+                                    <label :for="'key_' + index" class="block pb-1">Key</label>
+                                    <input type="text" :name="'key_' + index" :id="'key_' + index" x-model="fields[index].key" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10"></span>
+                                </div>
+                                <div>
+                                    <label :for="'type_' + index" class="block pb-1">Resource type</label>
+                                    <select :name="'type_' + index" :id="'type_' + index" x-model="fields[index].type" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10">
+                                        <option value="string" selected>String</option>
+                                        <option value="boolean">Boolean</option>
+                                        <option value="number">Number</option>
+                                        <option value="select">Select</option>
+                                        <option value="money">Money</option>
+                                    </select>
+                                </div>
+                            </fieldset>
                         </li>
                     </template>
                 </ul>
             </div>
+            <button type="button" @click='fields.push({ "type": "string" }); $nextTick(() => { selectNewest() });' class="p-2 w-full text-slate-100 bg-slate-700">Add Field</button>
+        </form>
+    </section>
+    <section>
+        <div class="grid grid-cols-1 gap-4">
+            <h2 class="text-xl font-bold">Output</h2>
             <div>
-                <h3 class="text-lg font-bold">Link</h3>
-                <textarea name="finalURL" id="finalURL" rows="4" x-model="finalURL" class="break-all w-full" onclick="this.select();" readonly></textarea>
+                <h3 class="text-lg font-bold">Metafields</h3>
+                <ul class="list-decimal pl-6" >
+                    <template x-for="(field, index) in fields" :key="'field_display__' + index">
+                        <li class="mt-2" x-show="field.key || field.namespace">
+                            <div class="flex items-center jusify-start">
+                                <span>
+                                    <span x-text="field.namespace" class="break-all"></span><span class="text-slate-500">.</span><span x-text="field.key" class="break-all"></span><span x-text="field.type" class="text-slate-500 italic capitalize ml-2"></span>
+                                </span>
+                                <button @click="removeField(index)" class="px-1">
+                                    <svg class="w-4 h-full" aria-hidden="true" role="presentation" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+                                        <line x1="1" x2="9" y1="1" y2="9" stroke="currentColor" />
+                                        <line x1="9" x2="1" y1="1" y2="9" stroke="currentColor" />
+                                    </svg>
+                                    <span class="sr-only">Remove</span>
+                                </button>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+            <div class="bg-slate-700 text-slate-100 p-4 space-y-4">
+                <h3 class="text-lg font-bold"><span aria-hidden="true">💫 &nbsp; </span>Final Edit Link:</h3>
+                <textarea name="finalURL" id="finalURL" rows="4" x-model="finalURL" class="break-all w-full bg-slate-700 bg-opacity-10" onclick="this.select();" readonly></textarea>
             </div>
         </div>
     </section>
@@ -96,9 +111,15 @@
                         }
                         return `metafields.${field.namespace}.${field.key}:${field.type}`
                     })
-                    let url = `https://${this.shop}/admin/bulk?edit=title%2C${encodeURIComponent(fieldsString)}&resource_name=${this.resource}`
+                    let url = `https://${this.shop}/admin/bulk?edit=title${ this.fields.length ? '%2C' + encodeURIComponent(fieldsString) : '' }${ this.resource == "ProductVariant" && '&show=full_title' }&resource_name=${this.resource}`
                     return url
                 },
+                removeField(index) {
+                    this.fields.splice(index)
+                },
+                selectNewest() {
+                    document.querySelector(`#namespace_${ this.fields.length -1 }`).focus()
+                }
             }))
         })
     </script>
