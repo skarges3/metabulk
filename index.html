@@ -5,14 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Metabulk - A Shopify Metafields Bulk Edit Link Generator</title>
+    <link rel="icon" type="image/svg+xml" href="https://fav.farm/ℳ">
+    <link rel="mask-icon" href="https://fav.farm/ℳ" >
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com/"></script>
 </head>
-<body x-data="meta" class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-screen-lg mx-auto p-8 md:p-32">
-    <div class="col-span-full space-y-4">
+<body x-data="meta" class="grid items-start grid-cols-1 md:grid-cols-2 gap-8 max-w-screen-lg mx-auto p-8 md:p-32">
+    <header class="col-span-full space-y-4">
         <h1 class="text-2xl font-bold">Metabulk <sup class="uppercase text-xs">Beta</sup></h1>
         <p class="text-lg text-slate-500">A Shopify Metafields Bulk Edit Link Generator</p>
-    </div>
+    </header>
     <section>
         <h2 class="text-xl font-bold mb-4">Input</h2>
         <form class="grid grid-cols-1 gap-4">
@@ -62,7 +64,7 @@
             <button type="button" @click='fields.push({ "type": "string" }); $nextTick(() => { selectNewest() });' class="p-2 w-full text-slate-100 bg-slate-700">Add Field</button>
         </form>
     </section>
-    <section>
+    <section class="md:sticky md:top-4">
         <div class="grid grid-cols-1 gap-4">
             <h2 class="text-xl font-bold">Output</h2>
             <div>
@@ -79,7 +81,7 @@
                                         <line x1="1" x2="9" y1="1" y2="9" stroke="currentColor" />
                                         <line x1="9" x2="1" y1="1" y2="9" stroke="currentColor" />
                                     </svg>
-                                    <span class="sr-only">Remove</span>
+                                    <span class="sr-only">Remove Field: <span x-text="field.key + '.' + field.namespace"></span></span>
                                 </button>
                             </div>
                         </li>
@@ -111,7 +113,8 @@
                         }
                         return `metafields.${field.namespace}.${field.key}:${field.type}`
                     })
-                    let url = `https://${this.shop}/admin/bulk?edit=title${ this.fields.length ? '%2C' + encodeURIComponent(fieldsString) : '' }${ this.resource == "ProductVariant" && '&show=full_title' }&resource_name=${this.resource}`
+                    let shopClean = this.shop.includes('http') ? this.shop.split('//')[1] : this.shop
+                    let url = `https://${shopClean}/admin/bulk?edit=title${ this.fields.length ? '%2C' + encodeURIComponent(fieldsString) : '' }${ this.resource == "ProductVariant" ? '&show=full_title' : '' }&resource_name=${this.resource}`
                     return url
                 },
                 removeField(index) {
@@ -123,5 +126,10 @@
             }))
         })
     </script>
+    <footer>
+        <p class="text-sm text-slate-500">
+            A project by  <a href="https://github.com/skarges3" target="_blank" class="underline decoration-1 underline-offset-1 hover:text-slate-900 dark:hover:text-slate-100">Spencer Karges</a> at <a href="https://smakkstudios.com?ref=metabulk" target="_blank" class="underline decoration-1 underline-offset-1 hover:text-slate-900 dark:hover:text-slate-100">SMAKK Studios</a>.
+        </p>
+    </footer>
 </body>
 </html>
