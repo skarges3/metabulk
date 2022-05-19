@@ -10,90 +10,92 @@
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com/"></script>
 </head>
-<body x-data="meta" class="grid items-start grid-cols-1 md:grid-cols-2 gap-8 max-w-screen-lg mx-auto p-8 md:p-32">
+<body x-data="meta" class="max-w-screen-lg mx-auto p-8 md:p-32 space-y-4">
     <header class="col-span-full space-y-4">
         <h1 class="text-2xl font-bold">Metabulk <sup class="uppercase text-xs">Beta</sup></h1>
         <p class="text-lg text-slate-500">A Shopify Metafields Bulk Edit Link Generator</p>
     </header>
-    <section>
-        <h2 class="text-xl font-bold mb-4">Input</h2>
-        <form class="grid grid-cols-1 gap-4">
-            <div>
-                <label for="shop" class="block pb-1">Shop URL</label>
-                <input type="text" name="shop" id="shop" x-model="shop" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10" placeholder="example.myshopify.com">
-            </div>
-            <div>
-                <label for="resource" class="block pb-1">Resource type</label>
-                <select name="resource" id="resource" x-model="resource" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10">
-                    <option value="Product">Product</option>
-                    <option value="ProductVariant">Variant</option>
-                    <option value="Collection">Collection</option>
-                    <option value="Article">Article</option>
-                </select>
-            </div>
-            <div>
-                <h3 class="font-bold">Metafields</h3>
-                <ul class="space-y-4">
-                    <template x-for="(field, index) in fields" :key="'field_input__' + index">
-                        <li>
-                            <fieldset class="grid grid-cols-1 gap-2 border border-slate-500 p-4">
-                                <legend class="px-2">Field <span x-text="index + 1 + ': '"></span></legend>
-                                <div>
-                                    <label :for="'namespace_' + index" class="block pb-1">Namespace</label>
-                                    <input type="text" :name="'namespace_' + index" :id="'namespace_' + index" x-model="fields[index].namespace" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10"></span>
+    <main class="grid items-start grid-cols-1 md:grid-cols-2 gap-8">
+        <section>
+            <h2 class="text-xl font-bold mb-4">Input</h2>
+            <form class="grid grid-cols-1 gap-4">
+                <div>
+                    <label for="shop" class="block pb-1">Shop URL</label>
+                    <input type="text" name="shop" id="shop" x-model="shop" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10" placeholder="example.myshopify.com">
+                </div>
+                <div>
+                    <label for="resource" class="block pb-1">Resource type</label>
+                    <select name="resource" id="resource" x-model="resource" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10">
+                        <option value="Product">Product</option>
+                        <option value="ProductVariant">Variant</option>
+                        <option value="Collection">Collection</option>
+                        <option value="Article">Article</option>
+                    </select>
+                </div>
+                <div>
+                    <h3 class="font-bold">Metafields</h3>
+                    <ul class="space-y-4">
+                        <template x-for="(field, index) in fields" :key="'field_input__' + index">
+                            <li>
+                                <fieldset class="grid grid-cols-1 gap-2 border border-slate-500 p-4">
+                                    <legend class="px-2">Field <span x-text="index + 1 + ': '"></span></legend>
+                                    <div>
+                                        <label :for="'namespace_' + index" class="block pb-1">Namespace</label>
+                                        <input type="text" :name="'namespace_' + index" :id="'namespace_' + index" x-model="fields[index].namespace" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10"></span>
+                                    </div>
+                                    <div>
+                                        <label :for="'key_' + index" class="block pb-1">Key</label>
+                                        <input type="text" :name="'key_' + index" :id="'key_' + index" x-model="fields[index].key" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10"></span>
+                                    </div>
+                                    <div>
+                                        <label :for="'type_' + index" class="block pb-1">Resource type</label>
+                                        <select :name="'type_' + index" :id="'type_' + index" x-model="fields[index].type" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10">
+                                            <option value="string" selected>String</option>
+                                            <option value="boolean">Boolean</option>
+                                            <option value="number">Number</option>
+                                            <option value="select">Select</option>
+                                            <option value="money">Money</option>
+                                        </select>
+                                    </div>
+                                </fieldset>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+                <button type="button" @click='fields.push({ "type": "string" }); $nextTick(() => { selectNewest() });' class="p-2 w-full text-slate-100 bg-slate-700">Add Field</button>
+            </form>
+        </section>
+        <section class="md:sticky md:top-4">
+            <div class="grid grid-cols-1 gap-4">
+                <h2 class="text-xl font-bold">Output</h2>
+                <div>
+                    <h3 class="text-lg font-bold">Metafields</h3>
+                    <ul class="list-decimal pl-6" >
+                        <template x-for="(field, index) in fields" :key="'field_display__' + index">
+                            <li class="mt-2" x-show="field.key || field.namespace">
+                                <div class="flex items-center jusify-start">
+                                    <span>
+                                        <span x-text="field.namespace" class="break-all"></span><span class="text-slate-500">.</span><span x-text="field.key" class="break-all"></span><span x-text="field.type" class="text-slate-500 italic capitalize ml-2"></span>
+                                    </span>
+                                    <button @click="removeField(index)" class="px-1">
+                                        <svg class="w-4 h-full" aria-hidden="true" role="presentation" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+                                            <line x1="1" x2="9" y1="1" y2="9" stroke="currentColor" />
+                                            <line x1="9" x2="1" y1="1" y2="9" stroke="currentColor" />
+                                        </svg>
+                                        <span class="sr-only">Remove Field: <span x-text="field.key + '.' + field.namespace"></span></span>
+                                    </button>
                                 </div>
-                                <div>
-                                    <label :for="'key_' + index" class="block pb-1">Key</label>
-                                    <input type="text" :name="'key_' + index" :id="'key_' + index" x-model="fields[index].key" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10"></span>
-                                </div>
-                                <div>
-                                    <label :for="'type_' + index" class="block pb-1">Resource type</label>
-                                    <select :name="'type_' + index" :id="'type_' + index" x-model="fields[index].type" class="border border-slate-500 w-full p-2 bg-slate-900 bg-opacity-10">
-                                        <option value="string" selected>String</option>
-                                        <option value="boolean">Boolean</option>
-                                        <option value="number">Number</option>
-                                        <option value="select">Select</option>
-                                        <option value="money">Money</option>
-                                    </select>
-                                </div>
-                            </fieldset>
-                        </li>
-                    </template>
-                </ul>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+                <div class="bg-slate-700 text-slate-100 p-4 space-y-4">
+                    <h3 class="text-lg font-bold"><span aria-hidden="true">💫 &nbsp; </span>Final Edit Link:</h3>
+                    <textarea name="finalURL" id="finalURL" rows="4" x-model="finalURL" class="break-all w-full bg-slate-700 bg-opacity-10" onclick="this.select();" readonly></textarea>
+                </div>
             </div>
-            <button type="button" @click='fields.push({ "type": "string" }); $nextTick(() => { selectNewest() });' class="p-2 w-full text-slate-100 bg-slate-700">Add Field</button>
-        </form>
-    </section>
-    <section class="md:sticky md:top-4">
-        <div class="grid grid-cols-1 gap-4">
-            <h2 class="text-xl font-bold">Output</h2>
-            <div>
-                <h3 class="text-lg font-bold">Metafields</h3>
-                <ul class="list-decimal pl-6" >
-                    <template x-for="(field, index) in fields" :key="'field_display__' + index">
-                        <li class="mt-2" x-show="field.key || field.namespace">
-                            <div class="flex items-center jusify-start">
-                                <span>
-                                    <span x-text="field.namespace" class="break-all"></span><span class="text-slate-500">.</span><span x-text="field.key" class="break-all"></span><span x-text="field.type" class="text-slate-500 italic capitalize ml-2"></span>
-                                </span>
-                                <button @click="removeField(index)" class="px-1">
-                                    <svg class="w-4 h-full" aria-hidden="true" role="presentation" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
-                                        <line x1="1" x2="9" y1="1" y2="9" stroke="currentColor" />
-                                        <line x1="9" x2="1" y1="1" y2="9" stroke="currentColor" />
-                                    </svg>
-                                    <span class="sr-only">Remove Field: <span x-text="field.key + '.' + field.namespace"></span></span>
-                                </button>
-                            </div>
-                        </li>
-                    </template>
-                </ul>
-            </div>
-            <div class="bg-slate-700 text-slate-100 p-4 space-y-4">
-                <h3 class="text-lg font-bold"><span aria-hidden="true">💫 &nbsp; </span>Final Edit Link:</h3>
-                <textarea name="finalURL" id="finalURL" rows="4" x-model="finalURL" class="break-all w-full bg-slate-700 bg-opacity-10" onclick="this.select();" readonly></textarea>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('meta', () => ({
